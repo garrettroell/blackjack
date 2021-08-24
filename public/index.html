@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
+  <link rel="manifest" href="./favicon/site.webmanifest">
+  <link rel="mask-icon" href="./favicon/safari-pinned-tab.svg" color="#5e814d">
+  <meta name="msapplication-TileColor" content="#5e814d">
+  <meta name="theme-color" content="#5e814d">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Alfa+Slab+One">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+  <link rel="stylesheet" href="./styles.css">
+  <title>Blackjack Simulator</title>
+</head>
+
+<script src="./js/blackjackLogic.js"></script>
+
+<style>
+
+</style>
+
+<body>
+  <div class="container">
+    <div class="content-body">
+
+      <h1 class="main-title">Blackjack Simulator</h1>
+
+      <div class="blackjack-image-holder">
+        <img class="blackjack-image" src="./blackjack.svg" alt="cards and chips">
+      </div>
+
+
+
+      <div class="control-panel">
+        <button class="shuffle-once-button" id="shuffle-once-button">Shuffle Once</button>
+        <div class="simulation-controls">
+          <p class="simulation-controls-title">Simulation controls</p>
+          <div class="start-stop-button" id="start-stop-button">Start</div>
+          <div class="shuffles-per-second">
+            <input type="range" min="1" max="100" value="60" class="shuffles-per-second-slider"
+              id="shuffles-per-second-slider">
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">shuffles per second:</p>
+              <p class="simulation-stat" id="shuffles-per-second-value">60</p>
+            </div>
+            <!-- <div class="simulation-stat-row">
+              <p class="simulation-stat">odds multiplier:</p>
+              <input type="number" id="odds-multiplier" name="odds-multiplier" class="odds-multiplier" min="0" max="5"
+                value="0">
+            </div> -->
+          </div>
+        </div>
+      </div>
+
+      <div class="summary" id="summary" style="margin-bottom: 20px;">test</div>
+      <div class="summary" id="card-order">card order</div>
+
+      <!-- <div class="simulation-stats">
+        <p class="simulation-stats-title">Simulation stats</p>
+        <div class="left-stats">
+          <div class="simulation-stat-row">
+            <p class="simulation-stat">pass net +/-:</p>
+            <p class="simulation-stat" id="pass-net-units-value">0</p>
+          </div>
+          <div class="simulation-stat-row">
+            <p class="simulation-stat">pass and odds net +/-:</p>
+            <p class="simulation-stat" id="pass-odds-net-units-value">0</p>
+          </div>
+          <div class="simulation-stat-row">
+            <p class="simulation-stat">don't pass net +/-:</p>
+            <p class="simulation-stat" id="dont-net-units-value">0</p>
+          </div>
+
+          <div class="simulation-stat-row" style="margin-top: 20px;">
+            <p class="simulation-stat">pass house edge:</p>
+            <p class="simulation-stat" id="house-edge-value">0%</p>
+          </div>
+          <div class="simulation-stat-row">
+            <p class="simulation-stat">wins:</p>
+            <p class="simulation-stat" id="wins-value">0</p>
+          </div>
+          <div class="simulation-stat-row">
+            <p class="simulation-stat">losses:</p>
+            <p class="simulation-stat" id="losses-value">0</p>
+          </div>
+          <div class="simulation-stat-row">
+            <p class="simulation-stat">percentile:</p>
+            <p class="simulation-stat" id="percentile-value">--</p>
+          </div>
+        </div>
+        <div class="right-stats">
+          <div class="top-right-stats">
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">rolls:</p>
+              <p class="simulation-stat" id="rolls-value">0</p>
+            </div>
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">time simulated:</p>
+              <p class="simulation-stat" id="time-simulated-value">0 seconds</p>
+            </div>
+          </div>
+          <div class="bottom-right-stats">
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">shooters:</p>
+              <p class="simulation-stat" id="shooters-value">0</p>
+            </div>
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">rolls/shooter:</p>
+              <p class="simulation-stat" id="rolls-per-shooter-value">0</p>
+            </div>
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">longest roll:</p>
+              <p class="simulation-stat" id="longest-roll">0</p>
+            </div>
+            <div class="simulation-stat-row" style="margin-top: 20px;">
+              <p class="simulation-stat">bonus opportunities:</p>
+              <p class="simulation-stat" id="bonus-ops">0</p>
+            </div>
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">all smalls:</p>
+              <p class="simulation-stat" id="all-smalls">0</p>
+            </div>
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">all talls:</p>
+              <p class="simulation-stat" id="all-talls">0</p>
+            </div>
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">make 'em alls:</p>
+              <p class="simulation-stat" id="make-em-alls">0</p>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+    </div>
+    <!-- second column -->
+    <div class="summary-column">
+      <!-- <div>
+        <div class="roll-tracker">
+          <p class="simulation-stats-title">Roll Tracker</p>
+          <div class="chart-column" id="roll-tracker-2" style="background-color: #e45252;">
+            <p class="chart-column-label">2</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-3" style="background-color:  #e45252;">
+            <p class="chart-column-label" style="color: white;">3</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-4" style="width: 100%;background-color: #e45252;">
+            <p class="chart-column-label">4</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-5" style="background-color:  #e45252;">
+            <p class="chart-column-label" style="color: white;">5</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-6" style="background-color:  #e45252;">
+            <p class="chart-column-label">6</p>
+          </div>
+          <div class=" chart-column" id="roll-tracker-7" style="background-color:  #e45252;">
+            <p class="chart-column-label" style="color: white;">7</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-8" style="background-color:  #e45252;">
+            <p class="chart-column-label">8</p>
+          </div>
+          <div class=" chart-column" id="roll-tracker-9" style="background-color:  #e45252;">
+            <p class="chart-column-label" style="color: white;">9</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-10" style="background-color:  #e45252;">
+            <p class="chart-column-label">10</p>
+          </div>
+          <div class=" chart-column" id="roll-tracker-11" style="background-color:  #e45252;">
+            <p class="chart-column-label" style="color: white;">11</p>
+          </div>
+          <div class="chart-column" id="roll-tracker-12" style="background-color:  #e45252;border-right-width: 1px;">
+            <p class="chart-column-label">12</p>
+          </div>
+        </div>
+        <div class="all-tall-small">
+          <p class="simulation-stats-title">All Tall / Small</p>
+          <div class="number-circle" id="number-circle-2">2</div>
+          <div class="number-circle" id="number-circle-3">3</div>
+          <div class="number-circle" id="number-circle-4">4</div>
+          <div class="number-circle" id="number-circle-5">5</div>
+          <div class="number-circle" id="number-circle-6">6</div>
+          <div class="number-circle" style="border: none;"></div>
+          <div class="number-circle" id="number-circle-8">8</div>
+          <div class="number-circle" id="number-circle-9">9</div>
+          <div class="number-circle" id="number-circle-10">10</div>
+          <div class="number-circle" id="number-circle-11">11</div>
+          <div class="number-circle" id="number-circle-12">12</div>
+        </div>
+        <div class="luck-evaluator-container">
+
+          <div class="half-way-line" id="half-way-line"></div>
+          <p class="simulation-stats-title">Luck Evaluator</p>
+          <div class="luck-evaluator-info" id="luck-evaluator-info">
+            <p id="luck-evaluator-percentile">percentile: </p>
+            <p id="luck-evaluator-wins">wins: </p>
+            <p id="luck-evaluator-losses">losses: </p>
+
+          </div>
+          <div class="luck-evaluator" id="luck-evaluator">
+            <p class="luck-evaluator-placeholder" id="luck-evaluator-placeholder">Graph of probabilities will be shown
+              after 3
+              decisions
+            </p>
+            <div class="luck-evaluator-left" id="luck-evaluator-left"></div>
+            <div class="luck-evaluator-right" id="luck-evaluator-right"></div>
+          </div>
+        </div>
+        <div class="distribution-type-container">
+          <p class="distribution-type" id="distribution-type">Binomial distribution</p>
+        </div>
+        <div class="simulation-stat-row" style="justify-content: center;">
+          <p class="simulation-stat">Current shooter rolls: &nbsp;</p>
+          <p class="simulation-stat" id="shooter-roll-length">0</p>
+        </div>
+        <div class="simulation-stat-row" style="justify-content: center;">
+          <p class="simulation-stat">Current point: &nbsp;</p>
+          <p class="simulation-stat" id="current-point">Off</p>
+        </div>
+        <p class="summary" id="summary"></p>
+      </div> -->
+
+    </div>
+
+  </div>
+
+</body>
+
+</html>

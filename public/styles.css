@@ -1,0 +1,390 @@
+body {
+  background-color: #476637;
+  margin: 0;
+  margin-top: 50px;
+  padding: 0;
+  text-align: center;
+}
+.container {
+  display: flex;
+  max-width: 1200px;
+  margin: auto;
+  padding: 0px 20px;
+}
+
+.content-body {
+  flex: 1;
+}
+
+.summary-column {
+  width: min(400px, 100%);
+  margin: 0px auto;
+}
+
+@media (max-width: 950px) {
+  .container {
+    flex-direction: column;
+  }
+}
+
+.main-title {
+  color: white;
+  margin-top: 0px;
+  font-family: "Alfa Slab One";
+  letter-spacing: 2px;
+  font-weight: lighter;
+}
+
+.blackjack-image {
+  width: min(100%, 150px);
+}
+
+.summary-title {
+  color: white;
+  margin-top: 0px;
+  font-family: "Alfa Slab One";
+  font-size: 25px;
+  letter-spacing: 2px;
+  font-weight: lighter;
+}
+
+.summary {
+  font-family: "Lato";
+  font-size: 18px;
+  color: white;
+}
+
+.control-panel {
+  margin: auto;
+  margin-top: 36px;
+
+  width: min(100%, 500px);
+  display: flex;
+}
+
+.shuffle-once-button {
+  height: 100px;
+  width: 100px;
+  margin-right: 25px;
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+  color: #e45252;
+  font-family: "Alfa Slab One";
+  font-size: 24px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.shuffle-once-button:hover {
+  background-color: #5e814d;
+}
+
+.simulation-controls {
+  position: relative;
+  flex: 1;
+  display: flex;
+  min-height: 100px;
+  /* width: 140px; */
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+  margin-bottom: 40px;
+}
+
+.simulation-controls-title {
+  font-family: "Alfa Slab One";
+  color: white;
+  padding: 0px 10px;
+  background-color: #476637;
+  position: absolute;
+  top: -13px;
+  right: 27px;
+  letter-spacing: 1px;
+  font-size: 18px;
+  margin: 0;
+}
+
+.start-stop-button {
+  height: 80px;
+  width: 80px;
+  margin: auto 10px;
+  /* margin-right: 25px; */
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 20px;
+  color: #e45252;
+  font-family: "Alfa Slab One";
+  font-size: 20px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.start-stop-button:hover {
+  background-color: #5e814d;
+}
+
+.shuffles-per-second {
+  flex: 1;
+  margin: 10px 40px 0px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* background-color: salmon; */
+}
+
+.shuffles-per-second-slider {
+  background-color: grey;
+  width: 100%;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+.time-per-shuffle-value {
+  font-family: "Lato";
+  color: white;
+}
+
+@media (max-width: 600px) {
+  .control-panel {
+    flex-direction: column;
+  }
+  .roll-once-button {
+    min-height: 50px;
+    width: 100%;
+    margin-bottom: 40px;
+    margin: 0px auto 40px auto;
+    /* border-radius: 15px; */
+  }
+}
+
+.simulation-stats {
+  position: relative;
+  display: flex;
+  width: min(100%, 500px);
+  padding: 10px 0px;
+  /* height: 225px; */
+  margin: 0px auto 40px auto;
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+}
+
+.simulation-stats-title {
+  position: absolute;
+  font-family: "Alfa Slab One";
+  color: white;
+  padding: 0px 10px;
+  background-color: #476637;
+  top: -15px;
+  right: 27px;
+  letter-spacing: 1px;
+  font-size: 18px;
+  margin: 0px;
+}
+
+.left-stats {
+  width: 100%;
+  /* height: 100%; */
+
+  margin: auto 20px;
+  /* padding: 20px; */
+}
+
+.right-stats {
+  width: 100%;
+  margin: 20px;
+  margin-left: 0px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.top-right-stats {
+  margin-bottom: 20px;
+}
+
+.simulation-stat-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.simulation-stat {
+  color: white;
+  font-family: "Lato";
+  font-size: 16px;
+  text-align: left;
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.roll-tracker {
+  width: 100%;
+  height: 170px;
+  display: flex;
+  align-items: flex-end;
+  margin-bottom: 40px;
+  padding: 15px 27px 0px 27px;
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+  position: relative;
+}
+
+.chart-column {
+  width: 100%;
+  height: 0%;
+  line-height: (2 * height - font-size)-1px;
+  margin-top: 50%;
+  position: relative;
+  border-style: solid;
+  border-color: white;
+  border-width: 1px;
+  border-right-width: 0px;
+  border-bottom-width: 0px;
+  /* border-top-color: #fff383; */
+}
+
+.chart-column-label {
+  position: absolute;
+  bottom: 5px;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+  font-family: "Lato";
+  color: white;
+}
+
+.odds-multiplier {
+  background-color: transparent;
+  border-style: solid;
+  border-radius: 6px;
+  border-color: white;
+  border-width: 1px;
+  color: white;
+  /* padding: auto; */
+  padding-left: 21px;
+}
+
+.all-tall-small {
+  width: 100%;
+  height: 83px;
+  display: flex;
+  margin-bottom: 36px;
+  padding: 27px 27px;
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+  position: relative;
+}
+
+.number-circle {
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  border: 2px solid white;
+  color: white;
+  text-align: center;
+  margin: auto;
+  font-family: "Lato";
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  /* align-items: center; */
+
+  /* font: 32px Arial, sans-serif; */
+}
+
+.luck-evaluator-container {
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+  position: relative;
+  padding: 15px 27px 1px 27px;
+  margin-bottom: 0px;
+  /* z-index: 4; */
+}
+
+.luck-evaluator {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+  /* margin-bottom: 20px; */
+  list-style: none;
+}
+
+.luck-evaluator-placeholder {
+  color: white;
+  font-family: "Lato";
+  font-size: 16px;
+  text-align: center;
+  margin: auto;
+}
+
+.half-way-line {
+  position: absolute;
+  z-index: 2;
+  top: 15px;
+  bottom: 0;
+  left: 50%;
+  border-left: 2px solid black;
+  pointer-events: none;
+  display: none;
+}
+
+.luck-evaluator-info {
+  color: white;
+  font-family: "Lato";
+  font-size: 14px;
+  height: 50px;
+  width: 150px;
+  position: absolute;
+  text-align: left;
+  display: none;
+}
+
+.luck-evaluator-info p {
+  margin: 2px;
+}
+
+.luck-evaluator-left {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: flex-end;
+  list-style: none;
+}
+
+.luck-evaluator-right {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: flex-end;
+  list-style: none;
+}
+.distribution-type-container {
+  height: 36px;
+}
+.distribution-type {
+  color: white;
+  font-family: "Lato";
+  font-size: 14px;
+  text-align: right;
+  margin-top: 5px;
+  margin-bottom: 16px;
+  margin-right: 27px;
+  display: none;
+}
