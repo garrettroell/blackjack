@@ -48,17 +48,28 @@
               <p class="simulation-stat">shuffles per second:</p>
               <p class="simulation-stat" id="shuffles-per-second-value">60</p>
             </div>
-            <!-- <div class="simulation-stat-row">
-              <p class="simulation-stat">odds multiplier:</p>
-              <input type="number" id="odds-multiplier" name="odds-multiplier" class="odds-multiplier" min="0" max="5"
-                value="0">
-            </div> -->
+            <div class="simulation-stat-row">
+              <p class="simulation-stat"># of decks:</p>
+              <input type="number" id="odds-multiplier" name="odds-multiplier" class="odds-multiplier" min="0" max="6"
+                value="6">
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="summary" id="summary" style="margin-bottom: 20px;">test</div>
-      <div class="summary" id="card-order">card order</div>
+      <div id="hand-list">
+        <div class="single-hand">
+          <div>count at start of hand: 0</div>
+          <div>player cards: player cards list</div>
+          <div>dealer cards: dealer cards list</div>
+          <div>result of hand: --</div>
+        </div>
+      </div>
+
+
+
+
+
 
       <!-- <div class="simulation-stats">
         <p class="simulation-stats-title">Simulation stats</p>
@@ -140,6 +151,8 @@
     </div>
     <!-- second column -->
     <div class="summary-column">
+      <div class="summary" id="summary" style="margin-bottom: 20px;">test</div>
+      <div class="summary" id="card-order">card order</div>
       <!-- <div>
         <div class="roll-tracker">
           <p class="simulation-stats-title">Roll Tracker</p>

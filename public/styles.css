@@ -90,7 +90,6 @@ body {
   flex: 1;
   display: flex;
   min-height: 100px;
-  /* width: 140px; */
   border: 1px solid #fff383;
   box-sizing: border-box;
   border-radius: 27px;
@@ -114,7 +113,6 @@ body {
   height: 80px;
   width: 80px;
   margin: auto 10px;
-  /* margin-right: 25px; */
   border: 1px solid #fff383;
   box-sizing: border-box;
   border-radius: 20px;
@@ -140,7 +138,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* background-color: salmon; */
 }
 
 .shuffles-per-second-slider {
@@ -159,13 +156,42 @@ body {
   .control-panel {
     flex-direction: column;
   }
-  .roll-once-button {
+  .shuffle-once-button {
     min-height: 50px;
     width: 100%;
     margin-bottom: 40px;
     margin: 0px auto 40px auto;
-    /* border-radius: 15px; */
   }
+}
+
+.simulation-stat-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.simulation-stat {
+  color: white;
+  font-family: "Lato";
+  font-size: 16px;
+  text-align: left;
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.odds-multiplier {
+  background-color: transparent;
+  border-style: solid;
+  border-radius: 6px;
+  border-color: white;
+  border-width: 1px;
+  color: white;
+  padding-left: 21px;
+}
+
+.single-hand {
+  font-family: "Lato";
+  color: white;
+  margin-bottom: 20px;
 }
 
 .simulation-stats {
@@ -173,7 +199,6 @@ body {
   display: flex;
   width: min(100%, 500px);
   padding: 10px 0px;
-  /* height: 225px; */
   margin: 0px auto 40px auto;
   border: 1px solid #fff383;
   box-sizing: border-box;
@@ -195,10 +220,7 @@ body {
 
 .left-stats {
   width: 100%;
-  /* height: 100%; */
-
   margin: auto 20px;
-  /* padding: 20px; */
 }
 
 .right-stats {
@@ -212,20 +234,6 @@ body {
 
 .top-right-stats {
   margin-bottom: 20px;
-}
-
-.simulation-stat-row {
-  display: flex;
-  justify-content: space-between;
-}
-
-.simulation-stat {
-  color: white;
-  font-family: "Lato";
-  font-size: 16px;
-  text-align: left;
-  margin-top: 0px;
-  margin-bottom: 5px;
 }
 
 .roll-tracker {
@@ -252,7 +260,6 @@ body {
   border-width: 1px;
   border-right-width: 0px;
   border-bottom-width: 0px;
-  /* border-top-color: #fff383; */
 }
 
 .chart-column-label {
@@ -263,17 +270,6 @@ body {
   width: 100%;
   font-family: "Lato";
   color: white;
-}
-
-.odds-multiplier {
-  background-color: transparent;
-  border-style: solid;
-  border-radius: 6px;
-  border-color: white;
-  border-width: 1px;
-  color: white;
-  /* padding: auto; */
-  padding-left: 21px;
 }
 
 .all-tall-small {
@@ -300,10 +296,6 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  /* align-items: center; */
-
-  /* font: 32px Arial, sans-serif; */
 }
 
 .luck-evaluator-container {
@@ -313,7 +305,6 @@ body {
   position: relative;
   padding: 15px 27px 1px 27px;
   margin-bottom: 0px;
-  /* z-index: 4; */
 }
 
 .luck-evaluator {
@@ -322,7 +313,6 @@ body {
   height: 150px;
   display: flex;
   align-items: flex-end;
-  /* margin-bottom: 20px; */
   list-style: none;
 }
 

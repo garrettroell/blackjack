@@ -1,4 +1,5 @@
 // define helper functions
+
 function shuffle(array) {
   var currentIndex = array.length,
     randomIndex;
@@ -15,7 +16,6 @@ function shuffle(array) {
       array[currentIndex],
     ];
   }
-
   return array;
 }
 
@@ -59,19 +59,173 @@ function updateCount(count, card) {
   }
 }
 
-// // wait for dom content before adding listeners
-document.addEventListener("DOMContentLoaded", (event) => {
-  console.log("loaded dom");
-  // create the deck of cards
-  var deskArray = [];
+function cardArrayToTotal(cardArray) {
+  let total = 0;
+  let numAces = 0;
+  let soft = false;
 
-  let num_decks = 6;
-  for (var i = 0; i < num_decks; i++) {
-    for (var j = 0; j < 52; j++) {
-      deskArray.push(j);
+  cardArray.forEach((card) => {
+    value = card.split(" of ")[0];
+    if (value === "A") {
+      numAces += 1;
+    } else if (["J", "Q", "K"].includes(value)) {
+      total += 10;
+    } else {
+      total += parseInt(value);
+    }
+  });
+
+  // all aces except for the last one count as one
+  if (numAces > 1) {
+    total += numAces - 1;
+    numAces = 1;
+  }
+  if (numAces === 1 && total <= 10) {
+    soft = true;
+    total += 11;
+  } else if (numAces === 1 && total > 10) {
+    soft = false; // this is just to be explicit
+    total += 1;
+  }
+  return soft ? `soft ${total.toString()}` : total.toString();
+}
+
+function isDoubleSituation(playerCards, dealerUpCardValue) {
+  if (
+    cardArrayToTotal(playerCards) === "9" &&
+    ["2", "3", "4", "5", "6"].includes(dealerUpCardValue)
+  ) {
+    return true;
+  } else if (
+    cardArrayToTotal(playerCards) === "10" &&
+    !["10", "J", "Q", "K", "A"].includes(dealerUpCardValue)
+  ) {
+    return true;
+  } else if (cardArrayToTotal(playerCards) === "11") {
+    return true;
+  } else if (
+    cardArrayToTotal(playerCards) === "soft 13" &&
+    ["5", "6"].includes(dealerUpCardValue)
+  ) {
+    return true;
+  } else if (
+    ["soft 14", "soft 15", "soft 16"].includes(cardArrayToTotal(playerCards)) &&
+    ["4", "5", "6"].includes(dealerUpCardValue)
+  ) {
+    return true;
+  } else if (
+    cardArrayToTotal(playerCards) === "soft 17" &&
+    ["3", "4", "5", "6"].includes(dealerUpCardValue)
+  ) {
+    return true;
+  } else if (
+    cardArrayToTotal(playerCards) === "soft 18" &&
+    ["2", "3", "4", "5", "6"].includes(dealerUpCardValue)
+  ) {
+    return true;
+  } else if (
+    cardArrayToTotal(playerCards) === "soft 19" &&
+    dealerUpCardValue === "6"
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isSplitSituation(playerCards, dealerUpCardValue) {
+  if (playerCards[0].split(" of ")[0] !== playerCards[1].split(" of ")[0]) {
+    return false;
+  } else {
+    const pairedCard = playerCards[0].split(" of ")[0];
+    // if paired card is ace or 8
+    if (pairedCard === "8" || pairedCard === "A") {
+      return true;
+      // if paired card is 9
+    } else if (
+      pairedCard === "9" &&
+      ["7", "10", "J", "Q", "K", "A"].includes(dealerUpCardValue)
+    ) {
+      return true;
+      // if paired card is 7
+    } else if (
+      pairedCard === "7" &&
+      ["2", "3", "4", "5", "6", "7"].includes(dealerUpCardValue)
+    ) {
+      return true;
+      // if paired card is 9
+    } else if (
+      pairedCard === "6" &&
+      ["2", "3", "4", "5", "6"].includes(dealerUpCardValue)
+    ) {
+      return true;
+    } else if (
+      (pairedCard === "2" || pairedCard === "3") &&
+      ["4", "5", "6", "7"].includes(dealerUpCardValue)
+    ) {
+      return true;
     }
   }
+  return false;
+}
 
+function handleStandardSituation(playerCards, dealerUpCardValue) {
+  handValue = parseInt(cardArrayToTotal(playerCards));
+  if (handValue <= 11) {
+    console.log(handValue, dealerUpCardValue, "hit");
+  } else if (handValue === 12 && ["4", "5", "6"].includes(dealerUpCardValue)) {
+    console.log(handValue, dealerUpCardValue, "stand");
+  } else if (handValue === 12 && !["4", "5", "6"].includes(dealerUpCardValue)) {
+    console.log(handValue, dealerUpCardValue, "hit");
+  } else if (
+    [13, 14, 15, 16].includes(handValue) &&
+    ["2", "3", "4", "5", "6"].includes(dealerUpCardValue)
+  ) {
+    console.log(handValue, dealerUpCardValue, "stand");
+  } else if (
+    [13, 14, 15, 16].includes(handValue) &&
+    !["2", "3", "4", "5", "6"].includes(dealerUpCardValue)
+  ) {
+    console.log(handValue, dealerUpCardValue, "hit");
+  } else {
+    console.log(handValue, dealerUpCardValue, "stand");
+  }
+}
+
+// function handleSoftSituation(playerCards, dealerUpCardValue) {
+//   const handValue = parseInt(cardArrayToTotal(playerCards).split);
+// }
+
+function getPlayerAction(playerCards, dealerUpCardValue) {
+  let shouldStay = false;
+
+  while (!shouldStay) {
+    if (
+      playerCards.length === 2 &&
+      isSplitSituation(playerCards, dealerUpCardValue)
+    ) {
+      console.log("split", playerCards, dealerUpCardValue);
+      return "split";
+    } else if (
+      playerCards.length === 2 &&
+      isDoubleSituation(playerCards, dealerUpCardValue)
+    ) {
+      console.log("double", playerCards, dealerUpCardValue);
+      return "double";
+    } else if (cardArrayToTotal(playerCards).includes("soft")) {
+      console.log("soft situation", playerCards);
+      // return "soft";
+    } else {
+      handleStandardSituation(playerCards, dealerUpCardValue);
+      return;
+      // console.log("standard situation", playerCards);
+    }
+  }
+}
+
+// // wait for dom content before adding listeners
+document.addEventListener("DOMContentLoaded", (event) => {
+  // assign elements to javascript objectss
   const cardOrder = document.getElementById("card-order");
   const shuffleBtn = document.getElementById("shuffle-once-button");
   const startStopButton = document.getElementById("start-stop-button");
@@ -82,37 +236,97 @@ document.addEventListener("DOMContentLoaded", (event) => {
     "shuffles-per-second-slider"
   );
   const summary = document.getElementById("summary");
+  const handList = document.getElementById("hand-list");
 
+  // create the deck of cards
+  var deckArray = [];
+
+  // add the cards to the deck
+  let num_decks = 6;
+  for (var i = 0; i < num_decks; i++) {
+    for (var j = 0; j < 52; j++) {
+      deckArray.push(j);
+    }
+  }
+
+  // function to run for each shuffle
   shuffleBtn.addEventListener("click", () => {
-    deckArray = shuffle(deskArray);
+    deckArray = shuffle(deckArray);
     cardOrder.innerHTML = "";
 
+    // get the current count for each card in the deck
     let count = 0;
     let maxCount = 0;
     let minCount = 0;
-    deskArray.forEach((num) => {
+    deckArray.forEach((num) => {
       const card = indexToCard(num);
       count = updateCount(count, card);
       maxCount = Math.max(count, maxCount);
       minCount = Math.min(count, minCount);
 
-      var node = document.createElement("p"); // Create a <li> node
+      var node = document.createElement("p");
       node.innerHTML = `${card} - ${count}`;
       node.style.margin = 0;
       cardOrder.appendChild(node); // Append the text to <li>
     });
+
+    const deckInfo = deckArray.map((num) => {
+      const card = indexToCard(num);
+      count = updateCount(count, card);
+      return {
+        card,
+        count,
+      };
+    });
+
+    // reset handList and currentCard each shuffle
+    handList.innerHTML = "";
+    let currentCard = 0;
+
+    // calculate/show as many hands as possible until
+    while (currentCard < (2 / 3) * deckInfo.length) {
+      // start the hand by reseting player and dealer cards
+      let playerCards = [];
+      let dealerCards = [];
+
+      const countAtStart =
+        currentCard === 0 ? 0 : deckInfo[currentCard - 1].count;
+
+      playerCards.push(deckInfo[currentCard].card);
+      playerCards.push(deckInfo[currentCard + 1].card);
+
+      dealerCards.push(deckInfo[currentCard + 2].card);
+      dealerCards.push(deckInfo[currentCard + 3].card);
+
+      const dealerUpCardValue = dealerCards[0].split(" of ")[0];
+
+      getPlayerAction(playerCards, dealerUpCardValue);
+
+      currentCard += 4;
+
+      handList.innerHTML += `
+      <div class="single-hand">
+        <div>count at start of hand: ${countAtStart}</div>
+        <div>player cards:</div>
+        <div>${playerCards.join(", ")} (${cardArrayToTotal(playerCards)})</div>
+        <div>dealer cards: </div>
+        <div>${dealerCards.join(", ")} (${cardArrayToTotal(dealerCards)})</div>
+        <div>result of hand: --</div>
+      </div>`;
+    }
+
     summary.innerText = `max count: ${maxCount}, min count: ${minCount}`;
   });
 
-  // set up start/stop button
-  function stopSimulation() {
-    clearInterval(intervalID);
-  }
-
+  // define start/stop button functions
   function startSimulation(shufflesPerSecond) {
     intervalID = setInterval(() => {
       shuffleBtn.click();
     }, 1000 / shufflesPerSecond);
+  }
+
+  function stopSimulation() {
+    clearInterval(intervalID);
   }
 
   // listen for slider changes and update field
@@ -120,18 +334,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
     shufflesPerSecond.innerHTML = this.value;
   };
 
+  // define actions to happen when the simulation button is pressed
   startStopButton.addEventListener("click", () => {
     if (startStopButton.innerHTML === "Start") {
-      // trigger on state
       startSimulation(shufflesPerSecond.innerHTML);
-      // styles
       startStopButton.innerHTML = "STOP";
       startStopButton.style.backgroundColor = "#E45252";
       startStopButton.style.color = "white";
     } else {
-      // trigger off state
       stopSimulation();
-      // styles
       startStopButton.innerHTML = "Start";
       startStopButton.style.backgroundColor = "transparent";
       startStopButton.style.color = "#E45252";
