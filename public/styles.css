@@ -188,10 +188,41 @@ body {
   padding-left: 21px;
 }
 
-.single-hand {
+.current-plus-minus {
   font-family: "Lato";
   color: white;
   margin-bottom: 20px;
+}
+
+.single-hand {
+  font-family: "Lato";
+  color: white;
+  margin: auto;
+  margin-bottom: 20px;
+  border: 1px solid #fff383;
+  box-sizing: border-box;
+  border-radius: 27px;
+  width: 60%;
+  text-align: center;
+  padding: 20px 20px;
+  position: relative;
+}
+
+.hand-number {
+  font-family: "Alfa Slab One";
+  color: white;
+  padding: 0px 10px;
+  background-color: #476637;
+  position: absolute;
+  top: -13px;
+  right: 27px;
+  letter-spacing: 1px;
+  font-size: 18px;
+  margin: 0;
+}
+
+.single-hand-row {
+  margin-bottom: 5px;
 }
 
 .simulation-stats {

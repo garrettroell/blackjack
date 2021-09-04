@@ -216,17 +216,19 @@ function shouldHitStandardSituation(playerCards, dealerUpCardValue) {
   }
 }
 
-function dealerShouldHit(dealerCards) {
-  const handValue = cardArrayToTotal(dealerCards);
-  if (!handValue.includes("soft")) {
-    return parseInt(handValue) < 17;
+// dealer hits soft 17
+function dealerShouldHit(dealerHand) {
+  const dealerHandTotalRaw = cardArrayToTotal(dealerHand);
+  if (dealerHandTotalRaw.includes("soft")) {
+    const playerHandTotal = parseInt(dealerHandTotalRaw.split("soft ")[1]);
+    return playerHandTotal <= 17;
   } else {
-    // dealer hits on soft 17
-    return parseInt(handValue.split("soft ")[1]) < 17;
+    const playerHandTotal = parseInt(dealerHandTotalRaw);
+    return playerHandTotal <= 16;
   }
 }
 
-// // wait for dom content before adding listeners
+// wait for dom content before adding listeners
 document.addEventListener("DOMContentLoaded", (event) => {
   // assign elements to javascript objectss
   const cardOrder = document.getElementById("card-order");
@@ -240,6 +242,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   );
   const summary = document.getElementById("summary");
   const handList = document.getElementById("hand-list");
+  const currentPlusMinusNode = document.getElementById("current-plus-minus");
 
   // create the deck of cards
   var deckArray = [];
@@ -261,124 +264,253 @@ document.addEventListener("DOMContentLoaded", (event) => {
     let count = 0;
     let maxCount = 0;
     let minCount = 0;
-    deckArray.forEach((num) => {
+
+    // calculate the count at each card up front
+    const deckInfo = deckArray.map((num) => {
       const card = indexToCard(num);
       count = updateCount(count, card);
       maxCount = Math.max(count, maxCount);
       minCount = Math.min(count, minCount);
-
-      // write out list of cards in the shoe
-      // var node = document.createElement("p");
-      // node.innerHTML = `${card} (${count})`;
-      // node.style.margin = 0;
-      // cardOrder.appendChild(node); // Append the text to <li>
-    });
-
-    const deckInfo = deckArray.map((num) => {
-      const card = indexToCard(num);
-      count = updateCount(count, card);
       return {
         card,
         count,
       };
     });
 
+    summary.innerText = `max count: ${maxCount}, min count: ${minCount}`;
+
     // reset handList and currentCard each shuffle
     handList.innerHTML = "";
     let currentCard = 0;
+    let currentHand = 0;
+
+    // let remainingCards = 312
 
     // calculate/show as many hands as possible until
     while (currentCard < (2 / 3) * deckInfo.length) {
-      console.log("new hand");
       // start the hand by reseting player and dealer cards
       let playerCards = [];
       let dealerCards = [];
 
-      const countAtStart = currentCard === 0 ? 0 : deckInfo[currentCard].count;
+      // the first card has a count, but should be zero
+      const countAtHandStart =
+        currentCard === 0 ? 0 : deckInfo[currentCard].count;
 
-      // this is needed to keep the pattern of incrementing the currentCard before accessing it
+      const remainingCards =
+        currentCard === 0 ? 312 - currentCard : 311 - currentCard;
+
+      const trueCount = countAtHandStart / (remainingCards / 52);
+
+      // update the hand number
+      currentHand = currentCard === 0 ? 0 : currentHand + 1;
+
+      // Keep the pattern of incrementing the currentCard before accessing it
       currentCard = currentCard === 0 ? 0 : currentCard + 1;
+
+      // add first card to playerCards
       playerCards.push(deckInfo[currentCard].card);
 
+      // add second card to playerCards
       currentCard += 1;
       playerCards.push(deckInfo[currentCard].card);
 
+      // add first card to dealerCards
       currentCard += 1;
       dealerCards.push(deckInfo[currentCard].card);
 
+      // add second card to dealerCards
       currentCard += 1;
       dealerCards.push(deckInfo[currentCard].card);
 
       const dealerUpCardValue = dealerCards[0].split(" of ")[0];
-      let situation = "";
 
-      // handle player decisions
+      // define an array to hold the player hands
+      let playerHands = [];
+
+      // determine if player needs to needs to split hands
       if (isSplitSituation(playerCards, dealerUpCardValue)) {
-        situation = "split";
-      } else if (isDoubleSituation(playerCards, dealerUpCardValue)) {
-        situation = "double";
-
+        // currently only allows for a single split
+        // I probably could use a while loop to ensure all splitable hands are split
         currentCard += 1;
-        playerCards.push(deckInfo[currentCard].card);
+        playerHands.push([playerCards[0], deckInfo[currentCard].card]);
+        currentCard += 1;
+        playerHands.push([playerCards[1], deckInfo[currentCard].card]);
       } else {
-        situation = "standard";
-        while (shouldHitStandardSituation(playerCards, dealerUpCardValue)) {
-          currentCard += 1;
-          playerCards.push(deckInfo[currentCard].card);
-        }
+        // playerHands with be an array with a single array
+        playerHands.push(playerCards);
       }
 
-      // handle dealer decisions {
+      // define a variable to keep track of if dealer needs to play
+      isViablePlayerHand = false;
 
-      // check if dealer player has any viable hands (more complicated for split)
-      const playerTotalRaw = cardArrayToTotal(playerCards);
-      let playerTotal = playerTotalRaw.includes("soft")
-        ? parseInt(playerTotalRaw.split("soft ")[0])
-        : parseInt(playerTotalRaw);
+      // Handle the drawing of player cards to get player results
+      playerResults = playerHands.map((playerHand) => {
+        let isDouble = false;
 
-      // dealer has to maybe get cards
-      if (playerTotal <= 21) {
-        // let dealerTotalRaw = cardArrayToTotal(dealerCards);
+        // check if it is a double situation
+        if (isDoubleSituation(playerHand, dealerUpCardValue)) {
+          isDouble = true;
+          // player automatically only gets one card
+          currentCard += 1;
+          playerHand.push(deckInfo[currentCard].card);
+        } else {
+          situation = "standard";
+          // add cards to player hand until a stopping condition
+          while (shouldHitStandardSituation(playerHand, dealerUpCardValue)) {
+            currentCard += 1;
+            playerHand.push(deckInfo[currentCard].card);
+          }
+        }
+
+        // get the hand total as a number
+        // this is probably the place to check for blackjack
+        const playerHandTotalRaw = cardArrayToTotal(playerHand);
+        let playerTotal = playerHandTotalRaw.includes("soft")
+          ? parseInt(playerHandTotalRaw.split("soft ")[1])
+          : parseInt(playerHandTotalRaw);
+
+        // check if the hand is a blackjack
+        const isBlackJack = playerTotal === 21 && playerHand.length === 2;
+
+        // update isViablePlayerHand to indicate whether the player has a viable hand
+        if (playerTotal <= 21) {
+          isViablePlayerHand = true;
+        }
+
+        // return the need information for player hand
+        return {
+          playerHand: playerHand,
+          total: playerTotal,
+          isDouble: isDouble,
+          isBlackJack: isBlackJack,
+        };
+      });
+
+      // potentially need to have if the dealer has blackjack
+      // might need to see if all player hands are blackjack,
+      // so the if the dealer doesn't have a blackjack, no
+      // cards are drawn for the dealer
+
+      // this could go higer up, to prevent player from drawing cards
+      dealerBlackJack = false;
+
+      dealerTotalRaw = cardArrayToTotal(dealerCards);
+      let dealerTotal = dealerTotalRaw.includes("soft")
+        ? parseInt(dealerTotalRaw.split("soft ")[1])
+        : parseInt(dealerTotalRaw);
+
+      // handle drawing dealer cards
+      if (isViablePlayerHand) {
         while (dealerShouldHit(dealerCards)) {
           currentCard += 1;
           dealerCards.push(deckInfo[currentCard].card);
         }
-      } else {
-        console.log("player busted");
+
+        dealerTotalRaw = cardArrayToTotal(dealerCards);
+        dealerTotal = dealerTotalRaw.includes("soft")
+          ? parseInt(dealerTotalRaw.split("soft ")[1])
+          : parseInt(dealerTotalRaw);
+
+        // after drawing all dealer cards check if dealer has blackjack
+        if (dealerTotal === 21 && dealerCards.length === 2) {
+          dealerBlackJack = true;
+        }
       }
 
-      const dealerTotalRaw = cardArrayToTotal(dealerCards);
-      let dealerTotal = dealerTotalRaw.includes("soft")
-        ? parseInt(dealerTotalRaw.split("soft ")[0])
-        : parseInt(dealerTotalRaw);
+      // get plus minus before evaluating the player's hands
+      let currentPlusMinus = parseInt(
+        currentPlusMinusNode.innerText.split("current +/-: ")[1]
+      );
 
-      // determine result of hand
-      let result = "--";
-      if (playerTotal > 21) {
-        result = "loss";
-      } else if (dealerTotal > 21) {
-        result = "win";
-      } else if (playerTotal > dealerTotal) {
-        result = "win";
-      } else if (playerTotal < dealerTotal) {
-        result = "loss";
-      } else {
-        result = "push";
-      }
+      // map over player results to determine outcome of each player hand
+      playerResults = playerResults.map((result) => {
+        let outcome;
+        let handPlusMinus;
+        if (result.total > 21 && !result.isDouble) {
+          // loss
+          handPlusMinus = -1;
+          outcome = "Loss from player bust";
+        } else if (result.total > 21 && result.isDouble) {
+          // double loss
+          handPlusMinus = -2;
+          outcome = "Double loss from player bust";
+        } else if (result.isBlackJack && dealerBlackJack) {
+          // push
+          handPlusMinus = 0;
+          outcome = "Blackjack push";
+        } else if (result.isBlackJack && !dealerBlackJack) {
+          // blackjack win
+          handPlusMinus = 1.5;
+          outcome = "Blackjack win";
+        } else if (dealerTotal > 21 && !result.isDouble) {
+          // win
+          handPlusMinus = 1;
+          outcome = "Win from dealer bust";
+        } else if (dealerTotal > 21 && result.isDouble) {
+          // double win
+          handPlusMinus = 2;
+          outcome = "Double win from dealer bust";
+        } else if (result.total > dealerTotal && !result.isDouble) {
+          // win
+          handPlusMinus = 1;
+          outcome = "Win from higher total";
+        } else if (result.total > dealerTotal && result.isDouble) {
+          // double win
+          handPlusMinus = 2;
+          outcome = "Double win from higher total";
+        } else if (result.total < dealerTotal && !result.isDouble) {
+          // loss
+          handPlusMinus = -1;
+          outcome = "Loss from higher total";
+        } else if (result.total < dealerTotal) {
+          // double loss
+          handPlusMinus = -2;
+          outcome = "Double loss from higher total";
+        } else {
+          // push
+          handPlusMinus = 0;
+          outcome = "Equal hand value push";
+        }
+        return { ...result, handPlusMinus, outcome };
+      });
 
+      console.log(currentHand, playerResults);
+
+      let playerHandString = "";
+      let roundPlusMinus = 0;
+
+      playerResults.forEach((hand) => {
+        playerHandString += `<div class="single-hand-row">Player hand: ${
+          hand.total
+        } (${hand.playerHand.join(", ")})</div>
+        <div class="single-hand-row">${hand.outcome}</div>`;
+        roundPlusMinus += hand.handPlusMinus;
+        currentPlusMinus += roundPlusMinus;
+      });
+
+      currentPlusMinusNode.innerText = `current +/-: ${currentPlusMinus}`;
+
+      // need to fix the toPercision to be to a certain number of decimal places
+
+      // display results
       handList.innerHTML += `
       <div class="single-hand">
-        <div>count at start of hand: ${countAtStart}</div>
-        <div>situation: ${situation}</div>
-        <div>player cards:</div>
-        <div>${playerCards.join(", ")} (${cardArrayToTotal(playerCards)})</div>
-        <div>dealer cards: </div>
-        <div>${dealerCards.join(", ")} (${cardArrayToTotal(dealerCards)})</div>
-        <div>result of hand: ${result}</div>
+        <div class="hand-number">Hand ${currentHand + 1}</div>
+        <div class="single-hand-row">Count is ${countAtHandStart} with ${remainingCards} remaining cards (True ${trueCount.toPrecision(
+        3
+      )})</div>
+        <div class="single-hand-row">Dealer hand: ${dealerTotal} (${dealerCards.join(
+        ", "
+      )})</div>
+        ${playerHandString}
+        <div class="single-hand-row">Result of hand: ${
+          roundPlusMinus > 0 ? "+" + roundPlusMinus : roundPlusMinus
+        }</div>
+        <div class="single-hand-row">Running +/-: ${
+          currentPlusMinus > 0 ? "+" + currentPlusMinus : currentPlusMinus
+        }</div>
       </div>`;
     }
-
-    summary.innerText = `max count: ${maxCount}, min count: ${minCount}`;
   });
 
   // define start/stop button functions
