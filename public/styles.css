@@ -373,7 +373,7 @@ body {
   border-radius: 27px;
   position: relative;
   padding: 15px 27px 1px 27px;
-  margin-bottom: 40px;
+  /* margin-bottom: 40px; */
 }
 
 .graph {
@@ -383,6 +383,10 @@ body {
   display: flex;
   align-items: flex-end;
   list-style: none;
+}
+
+.expected-value-graph {
+  align-items: flex-start;
 }
 
 .graph-placeholder {
@@ -434,10 +438,10 @@ body {
   align-items: flex-end;
   list-style: none;
 }
-.distribution-type-container {
+.cutoff-container {
   height: 36px;
 }
-.distribution-type {
+.cutoff {
   color: white;
   font-family: "Lato";
   font-size: 14px;
@@ -445,5 +449,5 @@ body {
   margin-top: 5px;
   margin-bottom: 16px;
   margin-right: 27px;
-  display: none;
+  /* display: none; */
 }

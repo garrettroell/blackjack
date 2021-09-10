@@ -132,15 +132,15 @@
     </div>
     <!-- second column -->
     <div class="summary-column">
-      <div class="graph-container">
+      <div class="graph-container" style="margin-bottom: 40px;">
         <p class="simulation-stats-title">True count frequency</p>
         <div class="graph-info" id="frequency-info">
           <p id="frequency-count">Count: </p>
           <p id="frequency-trials">Trials: </p>
           <p id="frequency-percent">Percent: </p>
         </div>
-        <div class="graph" id="frquency-graph">
-          <p class="graph-placeholder" id="frquency-graph-placeholder">Graph of count frequencies will be shown
+        <div class="graph" id="frequency-graph">
+          <p class="graph-placeholder" id="frequency-graph-placeholder">Graph of count frequencies will be shown
             after first shuffle
           </p>
         </div>
@@ -149,16 +149,18 @@
       <div class="graph-container">
         <p class="simulation-stats-title">Expected value by count</p>
         <div class="graph-info" id="expected-value-info">
-          <p id="expected-value-percentile">percentile: </p>
-          <p id="expected-value-wins">wins: </p>
-          <p id="expected-value-losses">losses: </p>
+          <p id="expected-value-count">Count: </p>
+          <p id="expected-value-trials">Trials: </p>
+          <p id="expected-value-expected-value">Exp. val.: </p>
         </div>
-        <div class="graph" id="graph">
-          <p class="graph-placeholder" id="expected-value-placeholder">Graph of expected values for each count will be
-            shown
-            after first shuffle
+        <div class="graph expected-value-graph" id="expected-value-graph">
+          <p class="graph-placeholder" id="expected-value-placeholder">
+            Graph of expected values for each count will be shown after first shuffle
           </p>
         </div>
+      </div>
+      <div class="cutoff-container">
+        <p class="cutoff">Expected value shown after 30 trials</p>
       </div>
 
       <p class="current-plus-minus">Summary of All Hands</p>

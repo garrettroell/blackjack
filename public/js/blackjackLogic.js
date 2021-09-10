@@ -243,22 +243,30 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const shuffleSpeedSlider = document.getElementById(
     "shuffles-per-second-slider"
   );
+  const handsValue = document.getElementById("hands-value");
   const handList = document.getElementById("hand-list");
   const currentPlusMinusValue = document.getElementById(
     "current-plus-minus-value"
   );
-  const frquencyGraph = document.getElementById("frquency-graph");
-  const frquencyGraphPlaceholder = document.getElementById(
-    "frquency-graph-placeholder"
-  );
-  const expectedValueGraph = document.getElementById("expected-value-graph");
-  const expectedValuePlaceholder = document.getElementById(
-    "expected-value-placeholder"
+  const frequencyGraph = document.getElementById("frequency-graph");
+  const frequencyGraphPlaceholder = document.getElementById(
+    "frequency-graph-placeholder"
   );
   const frequencyInfo = document.getElementById("frequency-info");
   const frequencyCount = document.getElementById("frequency-count");
   const frequencyTrials = document.getElementById("frequency-trials");
   const frequencyPercent = document.getElementById("frequency-percent");
+
+  const expectedValueGraph = document.getElementById("expected-value-graph");
+  const expectedValuePlaceholder = document.getElementById(
+    "expected-value-placeholder"
+  );
+  const expectedValueInfo = document.getElementById("expected-value-info");
+  const expectedValueCount = document.getElementById("expected-value-count");
+  const expectedValueTrials = document.getElementById("expected-value-trials");
+  const expectedValueValue = document.getElementById(
+    "expected-value-expected-value"
+  );
 
   // create the deck of cards
   var deckArray = [];
@@ -284,7 +292,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   // function to run for each shuffle
   shuffleBtn.addEventListener("click", () => {
-    frquencyGraphPlaceholder.style.display = "none";
+    frequencyGraphPlaceholder.style.display = "none";
     expectedValuePlaceholder.style.display = "none";
 
     deckArray = shuffle(deckArray);
@@ -544,15 +552,20 @@ document.addEventListener("DOMContentLoaded", (event) => {
       </div>`;
     }
 
+    // update the current number of hands
+    handsValue.innerText = parseInt(handsValue.innerText) + currentHand + 1;
+
     // clear columns from frequency graph
-    while (frquencyGraph.firstChild) {
-      frquencyGraph.removeChild(frquencyGraph.firstChild);
+    while (frequencyGraph.firstChild) {
+      frequencyGraph.removeChild(frequencyGraph.firstChild);
     }
 
     // define values for plotting
     let maxDisplayCount = 0;
     let maxFrequency = 0;
+    let maxExpectedValue = 0;
     let totalTrials = 0;
+    const minTrials = 30; // determines minimum number to be shown on expected value graph
 
     // find the largest absolute value of a count that has a trial
     Object.keys(resultsHolder).forEach((count) => {
@@ -561,6 +574,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
         maxDisplayCount = Math.max(maxDisplayCount, Math.abs(count.toString()));
         maxFrequency = Math.max(maxFrequency, countData.trials);
         totalTrials += countData.trials;
+      }
+      if (countData.trials >= minTrials) {
+        maxExpectedValue = Math.max(
+          maxExpectedValue,
+          Math.abs(countData.expectedValue)
+        );
       }
     });
 
@@ -601,7 +620,60 @@ document.addEventListener("DOMContentLoaded", (event) => {
         column.style.borderStyle = "none";
       });
 
-      frquencyGraph.appendChild(column);
+      frequencyGraph.appendChild(column);
+    });
+
+    // clear columns from expectedValue graph
+    while (expectedValueGraph.firstChild) {
+      expectedValueGraph.removeChild(expectedValueGraph.firstChild);
+    }
+
+    // console.log(resultsHolder);
+
+    // calculate the height of each column to add to frequency graph
+    plottedValues.forEach((countVal) => {
+      const countData = resultsHolder[countVal];
+
+      // height of plot is 150px, so half height is 75px
+      const barValue =
+        countData.trials >= minTrials
+          ? countData.expectedValue / maxExpectedValue
+          : 0;
+      const barHeight = 75 * Math.abs(barValue);
+      const marginTop = barValue > 0 ? `${75 - barHeight}` : "75";
+
+      console.log(countVal, barValue, marginTop);
+
+      var column = document.createElement("LI");
+      column.style.height = `${barHeight}px`;
+      column.style.marginTop = `${marginTop}px`;
+      column.style.width = "100%";
+      column.style.backgroundColor = "#e45252";
+
+      column.addEventListener("mouseenter", () => {
+        expectedValueCount.innerHTML = `Count: ${countVal}`;
+        expectedValueTrials.innerHTML = `Trials: ${countData.trials}`;
+        expectedValueValue.innerHTML = `Exp. val.: ${round(
+          countData.expectedValue,
+          3
+        )}`;
+
+        expectedValueInfo.style.display = "block";
+
+        column.style.borderStyle = "solid";
+        column.style.borderWidth = "1px";
+        column.style.borderColor = "#fff383";
+      });
+
+      column.addEventListener("mouseleave", () => {
+        // hide info div
+        expectedValueInfo.style.display = "none";
+
+        // change column color back
+        column.style.borderStyle = "none";
+      });
+
+      expectedValueGraph.appendChild(column);
     });
   });
 
