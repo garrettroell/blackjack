@@ -244,7 +244,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
     "shuffles-per-second-slider"
   );
   const handList = document.getElementById("hand-list");
-  const currentPlusMinusNode = document.getElementById("current-plus-minus");
+  const currentPlusMinusValue = document.getElementById(
+    "current-plus-minus-value"
+  );
+  const frquencyGraph = document.getElementById("frquency-graph");
+  const frquencyGraphPlaceholder = document.getElementById(
+    "frquency-graph-placeholder"
+  );
+  const expectedValueGraph = document.getElementById("expected-value-graph");
+  const expectedValuePlaceholder = document.getElementById(
+    "expected-value-placeholder"
+  );
+  const frequencyInfo = document.getElementById("frequency-info");
+  const frequencyCount = document.getElementById("frequency-count");
+  const frequencyTrials = document.getElementById("frequency-trials");
+  const frequencyPercent = document.getElementById("frequency-percent");
 
   // create the deck of cards
   var deckArray = [];
@@ -268,10 +282,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     };
   }
 
-  console.log(resultsHolder);
-
   // function to run for each shuffle
   shuffleBtn.addEventListener("click", () => {
+    frquencyGraphPlaceholder.style.display = "none";
+    expectedValuePlaceholder.style.display = "none";
+
     deckArray = shuffle(deckArray);
 
     // get the current count for each card in the deck
@@ -430,9 +445,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       }
 
       // get plus minus before evaluating the player's hands
-      let currentPlusMinus = parseInt(
-        currentPlusMinusNode.innerText.split("current +/-: ")[1]
-      );
+      let currentPlusMinus = parseInt(currentPlusMinusValue.innerText);
 
       // map over player results to determine outcome of each player hand
       playerResults = playerResults.map((result) => {
@@ -506,7 +519,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
           resultsHolder[currentCount]["trials"];
       });
 
-      currentPlusMinusNode.innerText = `current +/-: ${currentPlusMinus}`;
+      currentPlusMinusValue.innerText = currentPlusMinus;
 
       // need to fix the toPercision to be to a certain number of decimal places
 
@@ -530,7 +543,66 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }</div>
       </div>`;
     }
-    console.log(resultsHolder);
+
+    // clear columns from frequency graph
+    while (frquencyGraph.firstChild) {
+      frquencyGraph.removeChild(frquencyGraph.firstChild);
+    }
+
+    // define values for plotting
+    let maxDisplayCount = 0;
+    let maxFrequency = 0;
+    let totalTrials = 0;
+
+    // find the largest absolute value of a count that has a trial
+    Object.keys(resultsHolder).forEach((count) => {
+      const countData = resultsHolder[count.toString()];
+      if (countData.trials != 0) {
+        maxDisplayCount = Math.max(maxDisplayCount, Math.abs(count.toString()));
+        maxFrequency = Math.max(maxFrequency, countData.trials);
+        totalTrials += countData.trials;
+      }
+    });
+
+    // create a list that can be used for plotting
+    let plottedValues = [];
+    for (var i = -1 * maxDisplayCount; i <= maxDisplayCount; i++) {
+      plottedValues.push(i.toString());
+    }
+
+    // calculate the height of each column to add to frequency graph
+    plottedValues.forEach((countVal) => {
+      const countData = resultsHolder[countVal];
+      var column = document.createElement("LI");
+      column.style.height = `${100 * (countData.trials / maxFrequency)}%`;
+      column.style.width = "100%";
+      column.style.backgroundColor = "#e45252";
+
+      column.addEventListener("mouseenter", () => {
+        frequencyCount.innerHTML = `Count: ${countVal}`;
+        frequencyTrials.innerHTML = `Trials: ${countData.trials}`;
+        frequencyPercent.innerHTML = `Percent: ${round(
+          100 * (countData.trials / totalTrials),
+          1
+        )}%`;
+
+        frequencyInfo.style.display = "block";
+
+        column.style.borderStyle = "solid";
+        column.style.borderWidth = "1px";
+        column.style.borderColor = "#fff383";
+      });
+
+      column.addEventListener("mouseleave", () => {
+        // hide info div
+        frequencyInfo.style.display = "none";
+
+        // change column color back
+        column.style.borderStyle = "none";
+      });
+
+      frquencyGraph.appendChild(column);
+    });
   });
 
   // define start/stop button functions

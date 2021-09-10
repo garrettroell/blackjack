@@ -53,28 +53,19 @@
         </div>
       </div>
 
-      <p class="current-plus-minus" id="current-plus-minus">current +/-: 0</p>
-
-      <div id="hand-list"></div>
-
-
-
-
-
-
-      <!-- <div class="simulation-stats">
+      <div class="simulation-stats">
         <p class="simulation-stats-title">Simulation stats</p>
         <div class="left-stats">
-          <div class="simulation-stat-row">
-            <p class="simulation-stat">pass net +/-:</p>
-            <p class="simulation-stat" id="pass-net-units-value">0</p>
+          <div class="simulation-stat-row" style="margin-top: 20px;">
+            <p class="simulation-stat">current +/-:</p>
+            <p class="simulation-stat" id="current-plus-minus-value">0</p>
           </div>
           <div class="simulation-stat-row">
-            <p class="simulation-stat">pass and odds net +/-:</p>
+            <p class="simulation-stat">temp 1:</p>
             <p class="simulation-stat" id="pass-odds-net-units-value">0</p>
           </div>
           <div class="simulation-stat-row">
-            <p class="simulation-stat">don't pass net +/-:</p>
+            <p class="simulation-stat">temp 2:</p>
             <p class="simulation-stat" id="dont-net-units-value">0</p>
           </div>
 
@@ -98,8 +89,8 @@
         <div class="right-stats">
           <div class="top-right-stats">
             <div class="simulation-stat-row">
-              <p class="simulation-stat">rolls:</p>
-              <p class="simulation-stat" id="rolls-value">0</p>
+              <p class="simulation-stat">hands:</p>
+              <p class="simulation-stat" id="hands-value">0</p>
             </div>
             <div class="simulation-stat-row">
               <p class="simulation-stat">time simulated:</p>
@@ -108,8 +99,8 @@
           </div>
           <div class="bottom-right-stats">
             <div class="simulation-stat-row">
-              <p class="simulation-stat">shooters:</p>
-              <p class="simulation-stat" id="shooters-value">0</p>
+              <p class="simulation-stat">shuffles:</p>
+              <p class="simulation-stat" id="shuffles-value">0</p>
             </div>
             <div class="simulation-stat-row">
               <p class="simulation-stat">rolls/shooter:</p>
@@ -137,46 +128,42 @@
             </div>
           </div>
         </div>
-      </div> -->
+      </div>
     </div>
     <!-- second column -->
     <div class="summary-column">
-
       <div class="graph-container">
-        <p class="simulation-stats-title">Count Frequency</p>
-        <div class="graph-info" id="frquency-info">
-          <p id="frquency-percentile">percentile: </p>
-          <p id="frquency-wins">wins: </p>
-          <p id="frquency-losses">losses: </p>
+        <p class="simulation-stats-title">True count frequency</p>
+        <div class="graph-info" id="frequency-info">
+          <p id="frequency-count">Count: </p>
+          <p id="frequency-trials">Trials: </p>
+          <p id="frequency-percent">Percent: </p>
         </div>
         <div class="graph" id="frquency-graph">
           <p class="graph-placeholder" id="frquency-graph-placeholder">Graph of count frequencies will be shown
             after first shuffle
           </p>
-          <!-- <div class="graph-left" id="graph-left"></div>
-          <div class="graph-right" id="graph-right"></div> -->
         </div>
       </div>
 
       <div class="graph-container">
-
-        <!-- <div class="half-way-line" id="half-way-line"></div> -->
-        <p class="simulation-stats-title">Expected Value by Count</p>
+        <p class="simulation-stats-title">Expected value by count</p>
         <div class="graph-info" id="expected-value-info">
           <p id="expected-value-percentile">percentile: </p>
           <p id="expected-value-wins">wins: </p>
           <p id="expected-value-losses">losses: </p>
-
         </div>
         <div class="graph" id="graph">
           <p class="graph-placeholder" id="expected-value-placeholder">Graph of expected values for each count will be
             shown
             after first shuffle
           </p>
-          <!-- <div class="graph-left" id="graph-left"></div>
-          <div class="graph-right" id="graph-right"></div> -->
         </div>
       </div>
+
+      <p class="current-plus-minus">Summary of All Hands</p>
+      <div id="hand-list"></div>
+
       <!-- <div class="distribution-type-container">
         <p class="distribution-type" id="distribution-type">Binomial distribution</p>
       </div> -->

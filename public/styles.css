@@ -25,6 +25,10 @@ body {
   .container {
     flex-direction: column;
   }
+  .summary-column {
+    width: min(500px, 100%);
+    margin: 0px auto;
+  }
 }
 
 .main-title {
@@ -167,6 +171,7 @@ body {
 .simulation-stat-row {
   display: flex;
   justify-content: space-between;
+  min-width: 180px;
 }
 
 .simulation-stat {
@@ -202,7 +207,7 @@ body {
   border: 1px solid #fff383;
   box-sizing: border-box;
   border-radius: 27px;
-  width: 60%;
+  /* width: 60%; */
   text-align: center;
   padding: 20px 20px;
   position: relative;
@@ -229,11 +234,13 @@ body {
   position: relative;
   display: flex;
   width: min(100%, 500px);
-  padding: 10px 0px;
+  /* padding: 10px 0px; */
   margin: 0px auto 40px auto;
   border: 1px solid #fff383;
   box-sizing: border-box;
   border-radius: 27px;
+  justify-content: space-around;
+  padding: 20px 20px;
 }
 
 .simulation-stats-title {
