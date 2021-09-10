@@ -55,14 +55,7 @@
 
       <p class="current-plus-minus" id="current-plus-minus">current +/-: 0</p>
 
-      <div id="hand-list">
-        <!-- <div class="single-hand">
-          <div>count at start of hand: 0</div>
-          <div>player cards: player cards list</div>
-          <div>dealer cards: dealer cards list</div>
-          <div>result of hand: --</div>
-        </div> -->
-      </div>
+      <div id="hand-list"></div>
 
 
 
@@ -145,12 +138,48 @@
           </div>
         </div>
       </div> -->
-
     </div>
     <!-- second column -->
     <div class="summary-column">
-      <div class="summary" id="summary" style="margin-bottom: 20px;">test</div>
-      <div class="summary" id="card-order">card order</div>
+
+      <div class="graph-container">
+        <p class="simulation-stats-title">Count Frequency</p>
+        <div class="graph-info" id="frquency-info">
+          <p id="frquency-percentile">percentile: </p>
+          <p id="frquency-wins">wins: </p>
+          <p id="frquency-losses">losses: </p>
+        </div>
+        <div class="graph" id="frquency-graph">
+          <p class="graph-placeholder" id="frquency-graph-placeholder">Graph of count frequencies will be shown
+            after first shuffle
+          </p>
+          <!-- <div class="graph-left" id="graph-left"></div>
+          <div class="graph-right" id="graph-right"></div> -->
+        </div>
+      </div>
+
+      <div class="graph-container">
+
+        <!-- <div class="half-way-line" id="half-way-line"></div> -->
+        <p class="simulation-stats-title">Expected Value by Count</p>
+        <div class="graph-info" id="expected-value-info">
+          <p id="expected-value-percentile">percentile: </p>
+          <p id="expected-value-wins">wins: </p>
+          <p id="expected-value-losses">losses: </p>
+
+        </div>
+        <div class="graph" id="graph">
+          <p class="graph-placeholder" id="expected-value-placeholder">Graph of expected values for each count will be
+            shown
+            after first shuffle
+          </p>
+          <!-- <div class="graph-left" id="graph-left"></div>
+          <div class="graph-right" id="graph-right"></div> -->
+        </div>
+      </div>
+      <!-- <div class="distribution-type-container">
+        <p class="distribution-type" id="distribution-type">Binomial distribution</p>
+      </div> -->
       <!-- <div>
         <div class="roll-tracker">
           <p class="simulation-stats-title">Roll Tracker</p>

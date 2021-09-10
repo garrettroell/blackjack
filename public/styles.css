@@ -249,7 +249,38 @@ body {
   margin: 0px;
 }
 
-.left-stats {
+.graph-info {
+  color: white;
+  font-family: "Lato";
+  font-size: 14px;
+  height: 50px;
+  width: 150px;
+  position: absolute;
+  text-align: left;
+  display: none;
+}
+
+.graph-info p {
+  margin: 2px;
+}
+
+.graph-left {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: flex-end;
+  list-style: none;
+}
+
+.graph-right {
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: flex-end;
+  list-style: none;
+}
+
+/* .left-stats {
   width: 100%;
   margin: auto 20px;
 }
@@ -265,9 +296,9 @@ body {
 
 .top-right-stats {
   margin-bottom: 20px;
-}
+} */
 
-.roll-tracker {
+/* .roll-tracker {
   width: 100%;
   height: 170px;
   display: flex;
@@ -278,9 +309,9 @@ body {
   box-sizing: border-box;
   border-radius: 27px;
   position: relative;
-}
+} */
 
-.chart-column {
+/* .chart-column {
   width: 100%;
   height: 0%;
   line-height: (2 * height - font-size)-1px;
@@ -291,7 +322,7 @@ body {
   border-width: 1px;
   border-right-width: 0px;
   border-bottom-width: 0px;
-}
+} */
 
 .chart-column-label {
   position: absolute;
@@ -329,16 +360,16 @@ body {
   justify-content: center;
 }
 
-.luck-evaluator-container {
+.graph-container {
   border: 1px solid #fff383;
   box-sizing: border-box;
   border-radius: 27px;
   position: relative;
   padding: 15px 27px 1px 27px;
-  margin-bottom: 0px;
+  margin-bottom: 40px;
 }
 
-.luck-evaluator {
+.graph {
   position: relative;
   width: 100%;
   height: 150px;
@@ -347,7 +378,7 @@ body {
   list-style: none;
 }
 
-.luck-evaluator-placeholder {
+.graph-placeholder {
   color: white;
   font-family: "Lato";
   font-size: 16px;

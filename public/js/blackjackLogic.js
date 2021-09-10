@@ -1,4 +1,8 @@
 // define helper functions
+const round = (number, decimalPlaces) => {
+  const factorOfTen = Math.pow(10, decimalPlaces);
+  return Math.round(number * factorOfTen) / factorOfTen;
+};
 
 function shuffle(array) {
   var currentIndex = array.length,
@@ -230,8 +234,7 @@ function dealerShouldHit(dealerHand) {
 
 // wait for dom content before adding listeners
 document.addEventListener("DOMContentLoaded", (event) => {
-  // assign elements to javascript objectss
-  const cardOrder = document.getElementById("card-order");
+  // assign elements to javascript objects
   const shuffleBtn = document.getElementById("shuffle-once-button");
   const startStopButton = document.getElementById("start-stop-button");
   const shufflesPerSecond = document.getElementById(
@@ -240,7 +243,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const shuffleSpeedSlider = document.getElementById(
     "shuffles-per-second-slider"
   );
-  const summary = document.getElementById("summary");
   const handList = document.getElementById("hand-list");
   const currentPlusMinusNode = document.getElementById("current-plus-minus");
 
@@ -255,10 +257,22 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   }
 
+  // define results holder
+  let resultsHolder = {};
+
+  for (let i = -25; i <= 25; i++) {
+    resultsHolder[i.toString()] = {
+      trials: 0,
+      netPlusMinus: 0,
+      expectedValue: 0,
+    };
+  }
+
+  console.log(resultsHolder);
+
   // function to run for each shuffle
   shuffleBtn.addEventListener("click", () => {
     deckArray = shuffle(deckArray);
-    cardOrder.innerHTML = "";
 
     // get the current count for each card in the deck
     let count = 0;
@@ -276,8 +290,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         count,
       };
     });
-
-    summary.innerText = `max count: ${maxCount}, min count: ${minCount}`;
 
     // reset handList and currentCard each shuffle
     handList.innerHTML = "";
@@ -474,8 +486,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         return { ...result, handPlusMinus, outcome };
       });
 
-      console.log(currentHand, playerResults);
-
       let playerHandString = "";
       let roundPlusMinus = 0;
 
@@ -485,7 +495,15 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } (${hand.playerHand.join(", ")})</div>
         <div class="single-hand-row">${hand.outcome}</div>`;
         roundPlusMinus += hand.handPlusMinus;
-        currentPlusMinus += roundPlusMinus;
+        currentPlusMinus += hand.handPlusMinus;
+
+        // add result to the result holder object
+        const currentCount = Math.round(trueCount).toString();
+        resultsHolder[currentCount]["trials"] += 1;
+        resultsHolder[currentCount]["netPlusMinus"] += hand.handPlusMinus;
+        resultsHolder[currentCount]["expectedValue"] =
+          resultsHolder[currentCount]["netPlusMinus"] /
+          resultsHolder[currentCount]["trials"];
       });
 
       currentPlusMinusNode.innerText = `current +/-: ${currentPlusMinus}`;
@@ -496,8 +514,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
       handList.innerHTML += `
       <div class="single-hand">
         <div class="hand-number">Hand ${currentHand + 1}</div>
-        <div class="single-hand-row">Count is ${countAtHandStart} with ${remainingCards} remaining cards (True ${trueCount.toPrecision(
-        3
+        <div class="single-hand-row">Count is ${countAtHandStart} with ${remainingCards} remaining cards (True ${round(
+        trueCount,
+        2
       )})</div>
         <div class="single-hand-row">Dealer hand: ${dealerTotal} (${dealerCards.join(
         ", "
@@ -511,6 +530,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         }</div>
       </div>`;
     }
+    console.log(resultsHolder);
   });
 
   // define start/stop button functions
