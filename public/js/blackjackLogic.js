@@ -4,6 +4,24 @@ const round = (number, decimalPlaces) => {
   return Math.round(number * factorOfTen) / factorOfTen;
 };
 
+function secondsToHms(d) {
+  d = Number(d);
+
+  m = Math.floor(d / 60);
+  h = Math.floor(d / 3600);
+  days = Math.floor(d / 86400);
+
+  if (d < 60) {
+    return d + " seconds";
+  } else if (d < 3600) {
+    return m + (m === 1 ? " minute" : " minutes");
+  } else if (d < 86400) {
+    return h + (h === 1 ? " hour" : " hours");
+  } else if (d < 31536000) {
+    return days + (days === 1 ? " day" : " days");
+  }
+}
+
 function shuffle(array) {
   var currentIndex = array.length,
     randomIndex;
@@ -237,30 +255,48 @@ document.addEventListener("DOMContentLoaded", (event) => {
   // assign elements to javascript objects
   const shuffleBtn = document.getElementById("shuffle-once-button");
   const startStopButton = document.getElementById("start-stop-button");
-  const shufflesPerSecond = document.getElementById(
-    "shuffles-per-second-value"
-  );
-  const shuffleSpeedSlider = document.getElementById(
-    "shuffles-per-second-slider"
-  );
+  const numDecksInput = document.getElementById("num-decks");
+  const favorableCutoff = document.getElementById("favorable-cutoff");
+  const favorableBet = document.getElementById("favorable-bet");
+
   const handsValue = document.getElementById("hands-value");
   const handList = document.getElementById("hand-list");
   const currentPlusMinusValue = document.getElementById(
     "current-plus-minus-value"
   );
-  const frequencyGraph = document.getElementById("frequency-graph");
-  const frequencyGraphPlaceholder = document.getElementById(
-    "frequency-graph-placeholder"
+  const maximumPlusMinusValue = document.getElementById("max-plus-minus-value");
+  const minimumPlusMinusValue = document.getElementById("min-plus-minus-value");
+  const strategicPlusMinusValue = document.getElementById(
+    "strategic-plus-minus-value"
   );
+
+  const doublesPercentValue = document.getElementById("doubles-percent-value");
+  const doublesExpValue = document.getElementById("doubles-exp-value");
+  const splitsPercentValue = document.getElementById("splits-percent-value");
+  const splitsExpValue = document.getElementById("splits-exp-value");
+
+  // console.log(doublesPercentValue);
+  // console.log(doublesExpValue);
+  // console.log(splitsPercentValue);
+  // console.log(splitsExpValue);
+
+  const shufflesValue = document.getElementById("shuffles-value");
+  const totalTime = document.getElementById("time-simulated-value");
+  const frequencyGraph = document.getElementById("frequency-graph");
+
   const frequencyInfo = document.getElementById("frequency-info");
   const frequencyCount = document.getElementById("frequency-count");
   const frequencyTrials = document.getElementById("frequency-trials");
   const frequencyPercent = document.getElementById("frequency-percent");
 
   const expectedValueGraph = document.getElementById("expected-value-graph");
-  const expectedValuePlaceholder = document.getElementById(
-    "expected-value-placeholder"
+
+  const expectedValueDetail = document.getElementById("exp-val-detail");
+  const halfWayLineVertical = document.getElementById("half-way-line-vertical");
+  const halfWayLineHorizontal = document.getElementById(
+    "half-way-line-horizontal"
   );
+
   const expectedValueInfo = document.getElementById("expected-value-info");
   const expectedValueCount = document.getElementById("expected-value-count");
   const expectedValueTrials = document.getElementById("expected-value-trials");
@@ -279,8 +315,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   }
 
-  // define results holder
+  // define results holder, and special hands holder
   let resultsHolder = {};
+  let specialHandHolder = {
+    doubles: 0,
+    doublePlusMinus: 0,
+    doublesExpValue: 0,
+    splits: 0,
+    splitPlusMinus: 0,
+    splitsExpValue: 0,
+  };
 
   for (let i = -25; i <= 25; i++) {
     resultsHolder[i.toString()] = {
@@ -292,8 +336,18 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   // function to run for each shuffle
   shuffleBtn.addEventListener("click", () => {
-    frequencyGraphPlaceholder.style.display = "none";
-    expectedValuePlaceholder.style.display = "none";
+    // increase number of shuffles
+    shufflesValue.innerText = parseInt(shufflesValue.innerText) + 1;
+
+    // increase time
+    const secondsPerHand = 30;
+    totalTime.innerHTML = secondsToHms(
+      parseInt(handsValue.innerHTML) * secondsPerHand
+    );
+
+    // console.log(numDecksInput.value);
+    // console.log(favorableCutoff.value);
+    // console.log(favorableBet.value);
 
     deckArray = shuffle(deckArray);
 
@@ -364,6 +418,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
       // determine if player needs to needs to split hands
       if (isSplitSituation(playerCards, dealerUpCardValue)) {
+        specialHandHolder["splits"] = specialHandHolder["splits"] + 1;
         // currently only allows for a single split
         // I probably could use a while loop to ensure all splitable hands are split
         currentCard += 1;
@@ -385,6 +440,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
         // check if it is a double situation
         if (isDoubleSituation(playerHand, dealerUpCardValue)) {
           isDouble = true;
+
+          specialHandHolder["doubles"] = specialHandHolder["doubles"] + 1;
+
           // player automatically only gets one card
           currentCard += 1;
           playerHand.push(deckInfo[currentCard].card);
@@ -407,7 +465,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         // check if the hand is a blackjack
         const isBlackJack = playerTotal === 21 && playerHand.length === 2;
 
-        // update isViablePlayerHand to indicate whether the player has a viable hand
+        // update isViablePlayerHand to indicate whether the player has a viable hand (not a busted hand)
         if (playerTotal <= 21) {
           isViablePlayerHand = true;
         }
@@ -421,7 +479,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         };
       });
 
-      // potentially need to have if the dealer has blackjack
+      // potentially need to check if the dealer has blackjack
       // might need to see if all player hands are blackjack,
       // so the if the dealer doesn't have a blackjack, no
       // cards are drawn for the dealer
@@ -454,6 +512,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
       // get plus minus before evaluating the player's hands
       let currentPlusMinus = parseInt(currentPlusMinusValue.innerText);
+      let strategicPlusMinus = parseInt(strategicPlusMinusValue.innerText);
+      let minPlusMinus = parseInt(minimumPlusMinusValue.innerText);
+      let maxPlusMinus = parseInt(maximumPlusMinusValue.innerText);
 
       // map over player results to determine outcome of each player hand
       playerResults = playerResults.map((result) => {
@@ -528,8 +589,12 @@ document.addEventListener("DOMContentLoaded", (event) => {
       });
 
       currentPlusMinusValue.innerText = currentPlusMinus;
-
-      // need to fix the toPercision to be to a certain number of decimal places
+      maximumPlusMinusValue.innerText = parseInt(
+        Math.max(currentPlusMinus, maxPlusMinus)
+      );
+      minimumPlusMinusValue.innerText = parseInt(
+        Math.min(currentPlusMinus, minPlusMinus)
+      );
 
       // display results
       handList.innerHTML += `
@@ -623,58 +688,72 @@ document.addEventListener("DOMContentLoaded", (event) => {
       frequencyGraph.appendChild(column);
     });
 
-    // clear columns from expectedValue graph
-    while (expectedValueGraph.firstChild) {
-      expectedValueGraph.removeChild(expectedValueGraph.firstChild);
+    const maxTrials = Math.max(
+      ...plottedValues.map((countVal) => {
+        const countData = resultsHolder[countVal];
+        return countData.trials;
+      })
+    );
+
+    console.log(maxTrials);
+
+    // remove either placeholder or columns if a single row has 30 or greater than trials
+    if (maxTrials >= 30) {
+      expectedValueDetail.style.display = "block";
+      halfWayLineHorizontal.style.display = "block";
+      halfWayLineVertical.style.display = "block";
+      // clear columns from expectedValue graph
+      while (expectedValueGraph.firstChild) {
+        expectedValueGraph.removeChild(expectedValueGraph.firstChild);
+      }
+
+      // calculate the height of each column to add to frequency graph
+      plottedValues.forEach((countVal) => {
+        const countData = resultsHolder[countVal];
+
+        // height of plot is 150px, so half height is 75px
+        const barValue =
+          countData.trials >= minTrials
+            ? countData.expectedValue / maxExpectedValue
+            : 0;
+        const barHeight = 75 * Math.abs(barValue);
+        const marginTop = barValue > 0 ? `${75 - barHeight}` : "75";
+
+        var column = document.createElement("LI");
+        column.style.height = `${barHeight}px`;
+        column.style.marginTop = `${marginTop}px`;
+        column.style.width = "100%";
+        column.style.backgroundColor = "#e45252";
+        // column.style.backgroundColor = countVal === "0" ? "white" : "#e45252";
+
+        column.addEventListener("mouseenter", () => {
+          expectedValueCount.innerHTML = `Count: ${countVal}`;
+          expectedValueTrials.innerHTML = `Trials: ${countData.trials}`;
+          expectedValueValue.innerHTML = `Exp. val.: ${round(
+            countData.expectedValue,
+            3
+          )}`;
+
+          expectedValueInfo.style.display = "block";
+
+          column.style.borderStyle = "solid";
+          column.style.borderWidth = "1px";
+          column.style.borderColor = "#fff383";
+        });
+
+        column.addEventListener("mouseleave", () => {
+          // hide info div
+          expectedValueInfo.style.display = "none";
+
+          // change column color back
+          column.style.borderStyle = "none";
+        });
+
+        expectedValueGraph.appendChild(column);
+      });
     }
 
-    // console.log(resultsHolder);
-
-    // calculate the height of each column to add to frequency graph
-    plottedValues.forEach((countVal) => {
-      const countData = resultsHolder[countVal];
-
-      // height of plot is 150px, so half height is 75px
-      const barValue =
-        countData.trials >= minTrials
-          ? countData.expectedValue / maxExpectedValue
-          : 0;
-      const barHeight = 75 * Math.abs(barValue);
-      const marginTop = barValue > 0 ? `${75 - barHeight}` : "75";
-
-      console.log(countVal, barValue, marginTop);
-
-      var column = document.createElement("LI");
-      column.style.height = `${barHeight}px`;
-      column.style.marginTop = `${marginTop}px`;
-      column.style.width = "100%";
-      column.style.backgroundColor = "#e45252";
-
-      column.addEventListener("mouseenter", () => {
-        expectedValueCount.innerHTML = `Count: ${countVal}`;
-        expectedValueTrials.innerHTML = `Trials: ${countData.trials}`;
-        expectedValueValue.innerHTML = `Exp. val.: ${round(
-          countData.expectedValue,
-          3
-        )}`;
-
-        expectedValueInfo.style.display = "block";
-
-        column.style.borderStyle = "solid";
-        column.style.borderWidth = "1px";
-        column.style.borderColor = "#fff383";
-      });
-
-      column.addEventListener("mouseleave", () => {
-        // hide info div
-        expectedValueInfo.style.display = "none";
-
-        // change column color back
-        column.style.borderStyle = "none";
-      });
-
-      expectedValueGraph.appendChild(column);
-    });
+    // console.log(specialHandHolder);
   });
 
   // define start/stop button functions
@@ -688,15 +767,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     clearInterval(intervalID);
   }
 
-  // listen for slider changes and update field
-  shuffleSpeedSlider.oninput = function () {
-    shufflesPerSecond.innerHTML = this.value;
-  };
-
+  const shufflesPerSecond = 60;
   // define actions to happen when the simulation button is pressed
   startStopButton.addEventListener("click", () => {
     if (startStopButton.innerHTML === "Start") {
-      startSimulation(shufflesPerSecond.innerHTML);
+      startSimulation(shufflesPerSecond);
       startStopButton.innerHTML = "STOP";
       startStopButton.style.backgroundColor = "#E45252";
       startStopButton.style.color = "white";
