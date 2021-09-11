@@ -291,7 +291,10 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
   const expectedValueGraph = document.getElementById("expected-value-graph");
 
-  const expectedValueDetail = document.getElementById("exp-val-detail");
+  const expectedValueDetailContainer = document.getElementById(
+    "exp-val-detail-container"
+  );
+  console.log(expectedValueDetailContainer);
   const halfWayLineVertical = document.getElementById("half-way-line-vertical");
   const halfWayLineHorizontal = document.getElementById(
     "half-way-line-horizontal"
@@ -695,13 +698,16 @@ document.addEventListener("DOMContentLoaded", (event) => {
       })
     );
 
-    console.log(maxTrials);
-
     // remove either placeholder or columns if a single row has 30 or greater than trials
     if (maxTrials >= 30) {
-      expectedValueDetail.style.display = "block";
+      // add details to graph
+      expectedValueDetailContainer.style.display = "block";
       halfWayLineHorizontal.style.display = "block";
       halfWayLineVertical.style.display = "block";
+
+      // make top margin smaller to keep hand list in same place
+      handList.style.marginTop = "25px";
+
       // clear columns from expectedValue graph
       while (expectedValueGraph.firstChild) {
         expectedValueGraph.removeChild(expectedValueGraph.firstChild);

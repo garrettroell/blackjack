@@ -146,7 +146,8 @@ body {
     flex-direction: column;
   }
   .shuffle-once-button {
-    min-height: 50px;
+    /* min-height: 50px; */
+    height: 100px;
     width: 100%;
     margin-bottom: 40px;
     margin: 0px auto 40px auto;
@@ -390,6 +391,7 @@ body {
 
 .exp-val-detail-container {
   height: 36px;
+  display: none;
 }
 .exp-val-detail {
   color: white;
@@ -397,11 +399,9 @@ body {
   font-size: 14px;
   text-align: right;
   margin-top: 5px;
-  margin-bottom: 16px;
   margin-right: 27px;
-  display: none;
 }
 
 .hand-list {
-  margin-top: 30px;
+  margin-top: 65px;
 }
