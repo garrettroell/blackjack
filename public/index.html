@@ -33,24 +33,24 @@
       </div>
 
       <div class="control-panel">
-        <button class="shuffle-once-button" id="shuffle-once-button">Shuffle Once</button>
+        <button class="one-shoe-button" id="one-shoe-button">Deal one shoe</button>
         <div class="simulation-controls">
           <p class="simulation-controls-title">Simulation controls</p>
           <div class="start-stop-button" id="start-stop-button">Start</div>
           <div class="simulation-input-section">
             <div class="simulation-input-row">
               <p class="simulation-stat"># of decks:</p>
-              <input type="number" id="num-decks" name="num-decks" class="simulation-input" min="0" max="100" value="6">
+              <input type="number" id="num-decks" name="num-decks" class="simulation-input" min="1" max="12" value="6">
             </div>
             <div class="simulation-input-row">
               <p class="simulation-stat">min. favorable count:</p>
-              <input type="number" id="favorable-cutoff" name="favorable-cutoff" class="simulation-input" min="0"
-                max="100" value="2">
+              <input type="number" id="favorable-cutoff" name="favorable-cutoff" class="simulation-input" min="-1"
+                max="100" value="1">
             </div>
             <div class="simulation-input-row">
               <p class="simulation-stat">bet when favorable count:</p>
               <input type="number" id="favorable-bet" name="favorable-bet" class="simulation-input" min="0" max="100"
-                value="10">
+                value="20">
             </div>
           </div>
         </div>
@@ -68,8 +68,8 @@
             <p class="simulation-stat" id="time-simulated-value">0 seconds</p>
           </div>
           <div class="simulation-stat-row">
-            <p class="simulation-stat">shuffles:</p>
-            <p class="simulation-stat" id="shuffles-value">0</p>
+            <p class="simulation-stat">shoes played:</p>
+            <p class="simulation-stat" id="shoes-value">0</p>
           </div>
         </div>
         <div class="right-stats">
@@ -79,6 +79,10 @@
               <p class="simulation-stat" id="current-plus-minus-value">0</p>
             </div>
             <div class="simulation-stat-row">
+              <p class="simulation-stat">strategic +/-:</p>
+              <p class="simulation-stat" id="strategic-plus-minus-value">0</p>
+            </div>
+            <div class="simulation-stat-row">
               <p class="simulation-stat">maximum +/-:</p>
               <p class="simulation-stat" id="max-plus-minus-value">0</p>
             </div>
@@ -86,13 +90,13 @@
               <p class="simulation-stat">minimum +/-:</p>
               <p class="simulation-stat" id="min-plus-minus-value">0</p>
             </div>
-            <div class="simulation-stat-row">
-              <p class="simulation-stat">strategic +/-:</p>
-              <p class="simulation-stat" id="strategic-plus-minus-value">0</p>
-            </div>
           </div>
 
           <div class="bottom-right-stats">
+            <div class="simulation-stat-row">
+              <p class="simulation-stat">number of doubles:</p>
+              <p class="simulation-stat" id="doubles-value">0</p>
+            </div>
             <div class="simulation-stat-row">
               <p class="simulation-stat">double %:</p>
               <p class="simulation-stat" id="doubles-percent-value">0</p>
@@ -100,14 +104,6 @@
             <div class="simulation-stat-row">
               <p class="simulation-stat">double exp. val.:</p>
               <p class="simulation-stat" id="doubles-exp-value">0</p>
-            </div>
-            <div class="simulation-stat-row">
-              <p class="simulation-stat">split %:</p>
-              <p class="simulation-stat" id="splits-percent-value">0</p>
-            </div>
-            <div class="simulation-stat-row">
-              <p class="simulation-stat">split exp. val.:</p>
-              <p class="simulation-stat" id="splits-exp-value">0</p>
             </div>
           </div>
         </div>
@@ -125,7 +121,7 @@
         </div>
         <div class="graph" id="frequency-graph">
           <p class="graph-placeholder" id="frequency-graph-placeholder">
-            Data will be shown after first shuffle
+            Data will be shown after first shoe is played
           </p>
         </div>
       </div>
@@ -148,7 +144,7 @@
       <div class="exp-val-detail-container" id="exp-val-detail-container">
         <p class="exp-val-detail" id="exp-val-detail">Only true counts with 30+ trials shown</p>
       </div>
-      <!-- <p class="current-plus-minus">Summary of Hands from Last Shuffle</p> -->
+      <!-- <p class="current-plus-minus">Summary of Hands from Last Shoe</p> -->
       <div class="hand-list" id="hand-list"></div>
     </div>
 

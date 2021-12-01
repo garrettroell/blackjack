@@ -1,9 +1,12 @@
 // define helper functions
+
+// round a number to a defined number of decimal places
 const round = (number, decimalPlaces) => {
   const factorOfTen = Math.pow(10, decimalPlaces);
   return Math.round(number * factorOfTen) / factorOfTen;
 };
 
+// convert seconds to hours, minutes and seconds
 function secondsToHms(d) {
   d = Number(d);
 
@@ -22,6 +25,7 @@ function secondsToHms(d) {
   }
 }
 
+// returns a randomly ordered version of the passed array
 function shuffle(array) {
   var currentIndex = array.length,
     randomIndex;
@@ -41,6 +45,7 @@ function shuffle(array) {
   return array;
 }
 
+// takes in a number between 0 and 51 and converts it to a specific card value
 function indexToCard(index) {
   if (index >= 0 && index <= 51) {
     suitIndex = Math.floor(index / 13);
@@ -65,6 +70,7 @@ function indexToCard(index) {
   }
 }
 
+// implements the high/low system of card counting
 function updateCount(count, card) {
   if (
     card.includes("2") ||
@@ -81,6 +87,7 @@ function updateCount(count, card) {
   }
 }
 
+// takes an array of cards and returns the value of the blackjack hand
 function cardArrayToTotal(cardArray) {
   let total = 0;
   let numAces = 0;
@@ -112,6 +119,7 @@ function cardArrayToTotal(cardArray) {
   return soft ? `soft ${total.toString()}` : total.toString();
 }
 
+// returns true if the player should double
 function isDoubleSituation(playerCards, dealerUpCardValue) {
   if (
     cardArrayToTotal(playerCards) === "9" &&
@@ -155,6 +163,7 @@ function isDoubleSituation(playerCards, dealerUpCardValue) {
   }
 }
 
+// returns true if the player should split
 function isSplitSituation(playerCards, dealerUpCardValue) {
   if (playerCards[0].split(" of ")[0] !== playerCards[1].split(" of ")[0]) {
     return false;
@@ -191,6 +200,7 @@ function isSplitSituation(playerCards, dealerUpCardValue) {
   return false;
 }
 
+// returns true if the player should hit
 function shouldHitSoftSituation(playerCards, dealerUpCardValue) {
   const handValue = parseInt(cardArrayToTotal(playerCards).split("soft ")[1]);
   if (handValue <= 16) {
@@ -210,6 +220,7 @@ function shouldHitSoftSituation(playerCards, dealerUpCardValue) {
   }
 }
 
+// returns true if the player should hit
 function shouldHitStandardSituation(playerCards, dealerUpCardValue) {
   // check if it is a soft hand situation
   if (cardArrayToTotal(playerCards).includes("soft")) {
@@ -238,9 +249,10 @@ function shouldHitStandardSituation(playerCards, dealerUpCardValue) {
   }
 }
 
-// dealer hits soft 17
+// returns true if the dealer should hit
 function dealerShouldHit(dealerHand) {
   const dealerHandTotalRaw = cardArrayToTotal(dealerHand);
+  //note: dealer hits soft 17
   if (dealerHandTotalRaw.includes("soft")) {
     const playerHandTotal = parseInt(dealerHandTotalRaw.split("soft ")[1]);
     return playerHandTotal <= 17;
@@ -250,10 +262,22 @@ function dealerShouldHit(dealerHand) {
   }
 }
 
+// define results holder, and special hands holder
+const shoesPerSecond = 60;
+let resultsHolder = {};
+let specialHandHolder = {
+  doubles: 0,
+  doublePlusMinus: 0,
+  // doublesExpValue: 0,
+  splits: 0,
+  splitPlusMinus: 0,
+  splitsExpValue: 0,
+};
+
 // wait for dom content before adding listeners
-document.addEventListener("DOMContentLoaded", (event) => {
+document.addEventListener("DOMContentLoaded", () => {
   // assign elements to javascript objects
-  const shuffleBtn = document.getElementById("shuffle-once-button");
+  const oneShoeBtn = document.getElementById("one-shoe-button");
   const startStopButton = document.getElementById("start-stop-button");
   const numDecksInput = document.getElementById("num-decks");
   const favorableCutoff = document.getElementById("favorable-cutoff");
@@ -270,17 +294,11 @@ document.addEventListener("DOMContentLoaded", (event) => {
     "strategic-plus-minus-value"
   );
 
+  const doublesValue = document.getElementById("doubles-value");
   const doublesPercentValue = document.getElementById("doubles-percent-value");
   const doublesExpValue = document.getElementById("doubles-exp-value");
-  const splitsPercentValue = document.getElementById("splits-percent-value");
-  const splitsExpValue = document.getElementById("splits-exp-value");
 
-  // console.log(doublesPercentValue);
-  // console.log(doublesExpValue);
-  // console.log(splitsPercentValue);
-  // console.log(splitsExpValue);
-
-  const shufflesValue = document.getElementById("shuffles-value");
+  const shoesValue = document.getElementById("shoes-value");
   const totalTime = document.getElementById("time-simulated-value");
   const frequencyGraph = document.getElementById("frequency-graph");
 
@@ -294,7 +312,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
   const expectedValueDetailContainer = document.getElementById(
     "exp-val-detail-container"
   );
-  console.log(expectedValueDetailContainer);
+
   const halfWayLineVertical = document.getElementById("half-way-line-vertical");
   const halfWayLineHorizontal = document.getElementById(
     "half-way-line-horizontal"
@@ -318,17 +336,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
     }
   }
 
-  // define results holder, and special hands holder
-  let resultsHolder = {};
-  let specialHandHolder = {
-    doubles: 0,
-    doublePlusMinus: 0,
-    doublesExpValue: 0,
-    splits: 0,
-    splitPlusMinus: 0,
-    splitsExpValue: 0,
-  };
-
   for (let i = -25; i <= 25; i++) {
     resultsHolder[i.toString()] = {
       trials: 0,
@@ -337,20 +344,29 @@ document.addEventListener("DOMContentLoaded", (event) => {
     };
   }
 
-  // function to run for each shuffle
-  shuffleBtn.addEventListener("click", () => {
-    // increase number of shuffles
-    shufflesValue.innerText = parseInt(shufflesValue.innerText) + 1;
+  numDecksInput.addEventListener("change", () => {
+    console.log(numDecksInput.value);
+    deckArray = [];
 
-    // increase time
+    // add the cards to the deck
+    let num_decks = numDecksInput.value;
+    for (var i = 0; i < num_decks; i++) {
+      for (var j = 0; j < 52; j++) {
+        deckArray.push(j);
+      }
+    }
+  });
+
+  // function to run for each shuffle
+  oneShoeBtn.addEventListener("click", () => {
+    // increase number of shoees
+    shoesValue.innerText = parseInt(shoesValue.innerText) + 1;
+
+    // increase time played
     const secondsPerHand = 30;
     totalTime.innerHTML = secondsToHms(
       parseInt(handsValue.innerHTML) * secondsPerHand
     );
-
-    // console.log(numDecksInput.value);
-    // console.log(favorableCutoff.value);
-    // console.log(favorableBet.value);
 
     deckArray = shuffle(deckArray);
 
@@ -446,6 +462,8 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
           specialHandHolder["doubles"] = specialHandHolder["doubles"] + 1;
 
+          // parseInt(doublesPercentValue.innerText) + 1;
+
           // player automatically only gets one card
           currentCard += 1;
           playerHand.push(deckInfo[currentCard].card);
@@ -523,6 +541,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
       playerResults = playerResults.map((result) => {
         let outcome;
         let handPlusMinus;
+        let strategicHandPlusMinus;
         if (result.total > 21 && !result.isDouble) {
           // loss
           handPlusMinus = -1;
@@ -530,6 +549,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } else if (result.total > 21 && result.isDouble) {
           // double loss
           handPlusMinus = -2;
+          specialHandHolder["doublePlusMinus"] -= 2;
           outcome = "Double loss from player bust";
         } else if (result.isBlackJack && dealerBlackJack) {
           // push
@@ -546,6 +566,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } else if (dealerTotal > 21 && result.isDouble) {
           // double win
           handPlusMinus = 2;
+          specialHandHolder["doublePlusMinus"] += 2;
           outcome = "Double win from dealer bust";
         } else if (result.total > dealerTotal && !result.isDouble) {
           // win
@@ -554,6 +575,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } else if (result.total > dealerTotal && result.isDouble) {
           // double win
           handPlusMinus = 2;
+          specialHandHolder["doublePlusMinus"] += 2;
           outcome = "Double win from higher total";
         } else if (result.total < dealerTotal && !result.isDouble) {
           // loss
@@ -562,13 +584,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
         } else if (result.total < dealerTotal) {
           // double loss
           handPlusMinus = -2;
+          specialHandHolder["doublePlusMinus"] -= 2;
           outcome = "Double loss from higher total";
         } else {
           // push
           handPlusMinus = 0;
           outcome = "Equal hand value push";
         }
-        return { ...result, handPlusMinus, outcome };
+
+        // if the true count is greater than the cutoff the favorable bet value is used
+        strategicHandPlusMinus =
+          trueCount > favorableCutoff.value
+            ? handPlusMinus * favorableBet.value
+            : handPlusMinus;
+
+        return { ...result, handPlusMinus, strategicHandPlusMinus, outcome };
       });
 
       let playerHandString = "";
@@ -581,6 +611,7 @@ document.addEventListener("DOMContentLoaded", (event) => {
         <div class="single-hand-row">${hand.outcome}</div>`;
         roundPlusMinus += hand.handPlusMinus;
         currentPlusMinus += hand.handPlusMinus;
+        strategicPlusMinus += hand.strategicHandPlusMinus;
 
         // add result to the result holder object
         const currentCount = Math.round(trueCount).toString();
@@ -591,7 +622,9 @@ document.addEventListener("DOMContentLoaded", (event) => {
           resultsHolder[currentCount]["trials"];
       });
 
+      // console.log("strategicPlusMinus", strategicPlusMinus);
       currentPlusMinusValue.innerText = currentPlusMinus;
+      strategicPlusMinusValue.innerText = strategicPlusMinus;
       maximumPlusMinusValue.innerText = parseInt(
         Math.max(currentPlusMinus, maxPlusMinus)
       );
@@ -622,6 +655,21 @@ document.addEventListener("DOMContentLoaded", (event) => {
 
     // update the current number of hands
     handsValue.innerText = parseInt(handsValue.innerText) + currentHand + 1;
+
+    // update doubles value
+    doublesValue.innerText = specialHandHolder["doubles"];
+
+    // update doubles percent value
+    doublesPercentValue.innerText = `${round(
+      100 * (specialHandHolder["doubles"] / parseInt(handsValue.innerText)),
+      2
+    )}%`;
+
+    // update doubles expected value
+    doublesExpValue.innerText = `${round(
+      specialHandHolder["doublePlusMinus"] / specialHandHolder["doubles"],
+      2
+    )}`;
 
     // clear columns from frequency graph
     while (frequencyGraph.firstChild) {
@@ -730,7 +778,6 @@ document.addEventListener("DOMContentLoaded", (event) => {
         column.style.marginTop = `${marginTop}px`;
         column.style.width = "100%";
         column.style.backgroundColor = "#e45252";
-        // column.style.backgroundColor = countVal === "0" ? "white" : "#e45252";
 
         column.addEventListener("mouseenter", () => {
           expectedValueCount.innerHTML = `Count: ${countVal}`;
@@ -758,26 +805,23 @@ document.addEventListener("DOMContentLoaded", (event) => {
         expectedValueGraph.appendChild(column);
       });
     }
-
-    // console.log(specialHandHolder);
   });
 
   // define start/stop button functions
-  function startSimulation(shufflesPerSecond) {
+  function startSimulation(shoesPerSecond) {
     intervalID = setInterval(() => {
-      shuffleBtn.click();
-    }, 1000 / shufflesPerSecond);
+      oneShoeBtn.click();
+    }, 1000 / shoesPerSecond);
   }
 
   function stopSimulation() {
     clearInterval(intervalID);
   }
 
-  const shufflesPerSecond = 60;
   // define actions to happen when the simulation button is pressed
   startStopButton.addEventListener("click", () => {
     if (startStopButton.innerHTML === "Start") {
-      startSimulation(shufflesPerSecond);
+      startSimulation(shoesPerSecond);
       startStopButton.innerHTML = "STOP";
       startStopButton.style.backgroundColor = "#E45252";
       startStopButton.style.color = "white";
